@@ -1,6 +1,11 @@
+package base;
+
+import Pages.LoginPage;
+import utils.ExcelUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -13,8 +18,8 @@ public class BaseTest {
     protected WebDriverWait wait;
 
     protected static final String BASE_URL = "http://localhost:4200";
-    protected static final String VALID_EMAIL = "testuser@iot.com";
-    protected static final String VALID_PASSWORD = "Password123!";
+    protected static final String VALID_EMAIL = ExcelUtils.getEmail();
+    protected static final String VALID_PASSWORD = ExcelUtils.getPassword();
 
     @BeforeMethod
     public void setup() {
@@ -30,10 +35,9 @@ public class BaseTest {
     }
 
     protected void login() {
-        driver.get(BASE_URL + "/login");
-        driver.findElement(org.openqa.selenium.By.cssSelector("input[type='email']")).sendKeys(VALID_EMAIL);
-        driver.findElement(org.openqa.selenium.By.cssSelector("input[formControlName='password']")).sendKeys(VALID_PASSWORD);
-        driver.findElement(org.openqa.selenium.By.cssSelector("button.login-btn")).click();
-        wait.until(org.openqa.selenium.support.ui.ExpectedConditions.urlContains("/dashboard"));
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.navigateTo(BASE_URL);
+        loginPage.login(VALID_EMAIL, VALID_PASSWORD);
+        wait.until(ExpectedConditions.urlContains("/dashboard"));
     }
 }
